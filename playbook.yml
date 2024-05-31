@@ -1,0 +1,33 @@
+- hosts: app
+  tasks:
+    - name: Stop Service
+      ansible.builtin.systemd:
+        name: app
+        state: stopped
+      ignore_errors: true
+      become: true # Use sudo
+
+    - name: Copy artifact
+      copy:
+        src: main
+        dest: /home/vagrant/main
+
+    - name: Make artifact executable
+      ansible.builtin.file:
+        path: /home/vagrant/main
+        mode: "u+x"
+      become: true # Use sudo
+
+    - name: Copy service definition
+      copy:
+        src: app.service
+        dest: /etc/systemd/system/app.service
+      become: true # use sudo
+
+    - name: Enable and start service
+      ansible.builtin.systemd:
+        name: app
+        enabled: yes
+        state: started
+        daemon_reload: true
+      become: true
