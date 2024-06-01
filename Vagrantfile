@@ -6,6 +6,7 @@ Vagrant.configure("2") do |config|
     target.vm.network "private_network", ip: "192.168.105.3"
     target.vm.synced_folder '.', '/vagrant', disabled: true # avoid requirement for vboxfs
     target.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--uartmode1", "file", "NUL"]
       vb.memory = "512"
     end
   end
@@ -23,6 +24,7 @@ Vagrant.configure("2") do |config|
     target.vm.synced_folder '.', '/vagrant', disabled: true
 
     target.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--uartmode1", "file", "NUL"]
       vb.memory = "2048"
     end
   end
@@ -33,6 +35,7 @@ Vagrant.configure("2") do |config|
 
     target.vm.network "private_network", ip: "192.168.105.4"
     target.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--uartmode1", "file", "NUL"]
       vb.memory = "2048"
     end
   end
