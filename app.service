@@ -1,9 +1,0 @@
-[Unit]
-Description=Task2
-
-[Service]
-ExecStart=/home/vagrant/main
-Type=simple
-
-[Install]
-WantedBy=multi-user.target

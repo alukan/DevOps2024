@@ -6,29 +6,32 @@ pipeline {
         REPO_DIR = 'DevOps2024'
     }
 
-    tools {
-        go 'go1.22.3'
-    }
-
     stages {
         stage('Pull Repository') {
             steps {
                 script {
                     sh """
                         cd ${REPO_DIR}
-                        git pull
+                        git pull origin docker
                     """
                 }
             }
         }
-        stage('Build') {
+        stage('Build image') {
             steps {
                 script {
-                    sh 'go version'
                     sh """
                         cd ${REPO_DIR}
-                        go build main.go
+                        docker build -t ttl.sh/alukan-devops .
                     """
+                    sh 'docker images'
+                }
+            }
+        }
+        stage('Push image') {
+            steps {
+                script {
+                    sh 'docker push ttl.sh/alukan-devops'
                 }
             }
         }
@@ -37,13 +40,15 @@ pipeline {
                 ANSIBLE_HOST_KEY_CHECKING = 'false'
             }
             steps {
-                sh """
-                    cd ${REPO_DIR}
-                    ls -la
-                """
-                ansiblePlaybook credentialsId: 'my-ssh-key',
-                                inventory: "${REPO_DIR}/hosts.ini",
-                                playbook: "${REPO_DIR}/playbook.yml"
+                script {
+                    sh """
+                        cd ${REPO_DIR}
+                        ls -la
+                    """
+                    ansiblePlaybook credentialsId: 'my-ssh-key',
+                                    inventory: "${REPO_DIR}/hosts.ini",
+                                    playbook: "${REPO_DIR}/playbook.yml"
+                }
             }
         }
     }
