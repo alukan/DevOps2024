@@ -1,7 +1,0 @@
-- hosts: app
-  tasks:
-    - name: Pull image
-      command: docker pull ttl.sh/alukan-devops:latest 
-
-    - name: Run container
-      command: docker run -d -p 4444:4444 ttl.sh/alukan-devops
