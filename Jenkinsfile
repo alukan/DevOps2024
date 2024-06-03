@@ -40,13 +40,33 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy stage') {
+            steps {
+                script {
+                    sh """
+                        ssh -i /var/lib/jenkins/.ssh/id_rsa vagrant@192.168.105.3 <<EOF
+                        sudo systemctl start docker
+                        # sudo apt update
+                        # sudo apt install -y docker.io
+                        echo "Listing all running containers:"
+                        sudo docker ps -a
+                        sudo docker stop ${CONTAINER_NAME} || true
+                        sudo docker rm ${CONTAINER_NAME} || true
+                        sudo docker pull ${DOCKER_IMAGE}
+                        
+                        # Run the new Docker container
+                        sudo docker run -d --name ${CONTAINER_NAME} -p ${CONTAINER_PORT}:${CONTAINER_PORT} ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+        stage('Deploy production') {
             steps {
                 script {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i /jenkins.pem ubuntu@ec2-15-237-195-221.eu-west-3.compute.amazonaws.com <<EOF
-                        sudo apt update
-                        sudo apt install -y docker.io
+                        # sudo apt update
+                        # sudo apt install -y docker.io
                         sudo systemctl start docker
                         echo "Listing all running containers:"
                         sudo docker ps -a
